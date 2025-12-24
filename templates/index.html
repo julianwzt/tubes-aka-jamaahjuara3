@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis Kompleksitas - Binary Search</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        .container { border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
+        button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; }
+        button:hover { background-color: #0056b3; }
+        .result-box { margin-top: 20px; padding: 10px; background: #f9f9f9; }
+        canvas { margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h1>Analisis Binary Search: Iteratif vs Rekursif</h1>
+    <p>Studi Kasus: Pencarian ID Lagu pada Katalog Terurut</p>
+
+    <div class="container">
+        <h3>1. Uji Coba Pencarian</h3>
+        <input type="number" id="target" placeholder="Masukkan ID Lagu (0 - 20000)">
+        <select id="algo">
+            <option value="iterative">Iteratif</option>
+            <option value="recursive">Rekursif</option>
+        </select>
+        <button onclick="runSearch()">Cari</button>
+        <div id="searchResult" class="result-box">Hasil akan muncul di sini...</div>
+    </div>
+
+    <div class="container" style="margin-top: 20px;">
+        <h3>2. Analisis Running Time (Benchmark)</h3>
+        <p>Klik tombol di bawah untuk menjalankan analisis pada berbagai ukuran input (10 s.d 100.000 data).</p>
+        <button onclick="runBenchmark()">Jalankan Benchmark & Buat Grafik</button>
+        <canvas id="timeChart"></canvas>
+    </div>
+
+    <script>
+        async function runSearch() {
+            const target = document.getElementById('target').value;
+            const algo = document.getElementById('algo').value;
+            const formData = new FormData();
+            formData.append('target', target);
+            formData.append('algo', algo);
+
+            const response = await fetch('/search', { method: 'POST', body: formData });
+            const data = await response.json();
+            
+            document.getElementById('searchResult').innerHTML = 
+                `<strong>Hasil:</strong> Index ${data.index}<br>` +
+                `<strong>Langkah:</strong> ${data.steps}<br>` +
+                `<strong>Waktu:</strong> ${data.time}`;
+        }
+
+        async function runBenchmark() {
+            document.getElementById('searchResult').innerHTML = "Sedang melakukan benchmark...";
+            const response = await fetch('/benchmark');
+            const data = await response.json();
+
+            const ctx = document.getElementById('timeChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.sizes,
+                    datasets: [{
+                        label: 'Iteratif (ms)',
+                        data: data.iterative,
+                        borderColor: 'blue',
+                        fill: false
+                    }, {
+                        label: 'Rekursif (ms)',
+                        data: data.recursive,
+                        borderColor: 'red',
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Perbandingan Running Time (Worst Case)' }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Ukuran Input (N)' } },
+                        y: { title: { display: true, text: 'Waktu (ms)' } }
+                    }
+                }
+            });
+            document.getElementById('searchResult').innerHTML = "Benchmark selesai. Lihat grafik di bawah.";
+        }
+    </script>
+</body>
+</html>
