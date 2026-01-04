@@ -67,7 +67,7 @@ def search():
         'algo': algo_type
     })
 
-# [cite_start]--- FITUR BENCHMARK
+#FITUR BENCHMARK
 @app.route('/benchmark')
 def benchmark():
     # Ukuran input variatif: 10, 100, ..., 1.000.000
@@ -102,3 +102,4 @@ def benchmark():
 if __name__ == '__main__':
 
     app.run(debug=True)
+
