@@ -4,8 +4,6 @@ from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-# [cite_start]--- IMPLEMENTASI ALGORITMA (SESUAI SUMBER [cite: 17]) ---
-
 def binary_search_iterative(arr, target):
     low = 0
     high = len(arr) - 1
@@ -35,13 +33,12 @@ def binary_search_recursive(arr, target, low, high, steps=0):
     else:
         return binary_search_recursive(arr, target, low, high - 1, steps)
 
-# --- GENERATE DATA DUMMY (KATALOG LAGU) ---
+# --- DATA DUMMY (KATALOG LAGU) ---
 # Menggunakan integer ID agar mudah disorting dan dicari
 def get_dataset(size):
     return list(range(0, size * 2, 2)) # Data genap terurut: 0, 2, 4...
 
 # --- ROUTES ---
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -70,7 +67,7 @@ def search():
         'algo': algo_type
     })
 
-# [cite_start]--- FITUR BENCHMARK (SESUAI SUMBER [cite: 20]) ---
+# [cite_start]--- FITUR BENCHMARK
 @app.route('/benchmark')
 def benchmark():
     # Ukuran input variatif: 10, 100, ..., 1.000.000
@@ -103,4 +100,5 @@ def benchmark():
     })
 
 if __name__ == '__main__':
+
     app.run(debug=True)
